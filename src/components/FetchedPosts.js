@@ -1,9 +1,27 @@
 import React from 'react'
-import Post from './Post'
+import { useDispatch, useSelector } from 'react-redux'
 
-export default function FetchedPosts({ posts }) {
+import Post from './Post'
+import { fetchPosts } from '../redux/actions'
+
+export default function FetchedPosts() {
+	const dispatch = useDispatch()
+	const posts = useSelector(state => state.posts.fetchedPosts)
+	const isLoading = useSelector(state => state.app.loading)
+
 	if (!posts.length) {
-		return <button className="btn btn-primary">Загрузить</button>
+		return (
+			<button
+				className='btn btn-primary'
+				onClick={() => dispatch(fetchPosts())}
+			>
+				Загрузить
+			</button>
+		)
 	}
-	return posts.map(post => <Post post={post} key={post} />)
+	if (isLoading) {
+		return <p>Loading</p>
+	} else {
+		return posts.map(post => <Post post={post} key={post.id} />)
+	}
 }
